@@ -4,7 +4,9 @@
  extern "C"{
 #endif
 
+#ifndef SD_BLOCK_SIZE
 #define SD_BLOCK_SIZE	(512)
+#endif
 #define SD_BLOCK_NUM	(10)
 #define SD_MULTI_BUF_SIZE (SD_BLOCK_SIZE * SD_BLOCK_NUM)
 

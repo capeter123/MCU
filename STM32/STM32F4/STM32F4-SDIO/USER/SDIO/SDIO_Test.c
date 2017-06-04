@@ -109,7 +109,9 @@ void SD_LowLevel_Init(void)
   RCC_AHB1PeriphClockCmd(SD_SDIO_DMA_CLK, ENABLE);
 	
 	/* Enable NVIC for DMA2 and SDIO */
+#ifdef SD_DMA_MODE
 	SD_NVIC_Configuration();
+#endif
 }
 
 /**
@@ -369,6 +371,6 @@ static void SD_NVIC_Configuration(void)
 	NVIC_Init(&NVIC_InitStructure);
 	
 	NVIC_InitStructure.NVIC_IRQChannel = SD_SDIO_DMA_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x2;
 	NVIC_Init(&NVIC_InitStructure);
 }

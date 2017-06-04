@@ -37,7 +37,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-
+#define SD_FATFS_TEST 1
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t uwTimingDelay;
@@ -47,7 +47,7 @@ FRESULT fr;
 FIL fil;
 BYTE fbuffer[512] = {0};
 BYTE fs_work_buf[4096] __attribute__((aligned(4))) = {0};
-const char* write_content = "Hello Fatfs R0.13\r\n";
+const char* write_content = "Hello Fatfs R0.11, mod by four gun.\r\n";
 UINT nBytes;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -76,34 +76,39 @@ int main(void)
 	SysTick_Configuration();
 	LED_GPIO_Init();
 	USART1_Config();
-	
-	//SD_TestAll();
-	fr = f_mount(&fs, "0:", 0);
-	if(FR_OK == fr)
+#if (SD_FATFS_TEST == 0)
+	SD_TestAll();
+#else
+	fr = f_mount(&fs, "0:", 1);
+	if(FR_NO_FILESYSTEM == fr)
+	{
+		printf("Not found a valid filesystem, format it now...\r\n");
+		fr = f_mkfs("0:", 0, 4096);
+		if(FR_OK == fr)
+		{
+			printf("mkfs finished, you should reset the mcu...\r\n");
+		}
+	}
+	else if(FR_OK == fr)
 	{
 		printf("Mount FileSystem Successfully!\r\n");
-		fr = f_open(&fil, "0:/DEMO.txt", FA_CREATE_ALWAYS | FA_WRITE);
+		printf("Fatfs Write Test>>>\r\n");
+		fr = f_open(&fil, "0:/DEMO1.txt", FA_CREATE_ALWAYS | FA_WRITE);
 		if(FR_OK == fr)
 		{
 			fr = f_write(&fil, write_content, strlen(write_content), &nBytes);
 			if(FR_OK == fr)
-				printf(" File write success.\r\n");
+				printf(" File write success, [%d] bytes.\r\n", nBytes);
 		}
 		else if(FR_EXIST == fr)
 		{
 			printf("File has exist, nothing to do!\r\n");
 		}
-		else if(FR_NO_FILESYSTEM == fr)
-		{
-			printf("Not found a valid filesystem, format it now...\r\n");
-			//fr = f_mkfs("0:", FM_ANY, 0, fs_work_buf, FF_MAX_SS);
-			//if(FR_OK == fr)
-				//printf("mkfs finished, you should reset the mcu...\r\n");
-		}
 		
 		f_close(&fil);
 		
-		fr = f_open(&fil, "0:/DEMO.txt", FA_OPEN_EXISTING | FA_READ);
+		printf("Fatfs Read test>>>\r\n");
+		fr = f_open(&fil, "0:/DEMO1.txt", FA_OPEN_EXISTING | FA_READ);
 		if(FR_OK == fr)
 		{
 			memset(fbuffer, 0, sizeof(fbuffer));
@@ -112,18 +117,22 @@ int main(void)
 			{
 				printf("%s\r\n", fbuffer);
 			}
+			else
+			{
+				printf("Read failed\r\n");
+			}
 			
 			f_close(&fil);
 		}
 	}
 	
 	f_mount(NULL, "0:", 0);
-	
+#endif
 	while(1)
 	{
 		GPIO_ToggleBits(LEDs_PORT, LED1_PIN);
 		Delay(1000);
-		printf("Hello World\r\n");
+		//printf("Hello World\r\n");
 	}
 }
 
@@ -187,7 +196,7 @@ static void SysTick_Configuration(void)
 		}
 	}
 	
-	NVIC_SetPriority(SysTick_IRQn, 0x0);
+	NVIC_SetPriority(SysTick_IRQn, 0x8);
 }
 
 static void NVIC_Gloabl_Configuration(void)

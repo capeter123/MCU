@@ -188,7 +188,9 @@ void SDIO_IRQHandler(void)
 void SD_SDIO_DMA_IRQHANDLER(void)
 {
   /* Process DMA2 Stream3 or DMA2 Stream6 Interrupt Sources */
+#ifdef SD_DMA_MODE
   SD_ProcessDMAIRQ();
+#endif
 }
 
 /**

@@ -179,7 +179,7 @@ DRESULT disk_write (
 		if(count>1)
 			result = SD_WriteMultiBlocks((BYTE*)buff, sector*SD_BLOCK_SIZE, SD_BLOCK_SIZE, count);
 		else
-			result = SD_WriteBlock((BYTE*)buff, sector*SD_BLOCK_SIZE, count);
+			result = SD_WriteBlock((BYTE*)buff, sector*SD_BLOCK_SIZE, SD_BLOCK_SIZE);
 		
 		SD_WaitWriteOperation();
 		while(SD_GetStatus() != SD_TRANSFER_OK);
@@ -214,11 +214,12 @@ DRESULT disk_ioctl (
 		switch(cmd)
 		{
 			case GET_BLOCK_SIZE:
-				*(DWORD*)buff = 1;
+				*(DWORD*)buff = SDCardInfo.CardBlockSize;;
 				res = RES_OK;
 				break;
 			case GET_SECTOR_SIZE:
 				*(DWORD*)buff = (WORD)SDCardInfo.CardBlockSize;
+				res = RES_OK;
 				break;
 			case GET_SECTOR_COUNT:
 				*(DWORD*)buff = (DWORD)(SDCardInfo.CardCapacity >> 9);
