@@ -8,19 +8,21 @@
 /*-----------------------------------------------------------------------*/
 
 #include "diskio.h"		/* FatFs lower layer API */
-#include "stm324xg_eval_sdio_sd.h" /* SD card operation interfaces */
+#include "hal_sdio_sd.h" /* SD card operation interfaces */
+#include "sdio_test.h"
 #include <string.h>
 
 extern SD_CardInfo SDCardInfo;
 /* Definitions of physical drive number for each drive */
 #ifndef SD_BLOCK_SIZE
-#define SD_BLOCK_SIZE	(512)
+#define SD_BLOCK_SIZE	(512UL)
 #endif
 #define DEV_SDCARD	0
 //#define DEV_RAM		1	/* Example: Map Ramdisk to physical drive 0 */
 //#define DEV_MMC		2	/* Example: Map MMC/SD card to physical drive 1 */
 //#define DEV_USB		3	/* Example: Map USB MSD to physical drive 2 */
-
+BYTE sd_scratch_buf[SD_BLOCK_SIZE] __attribute__((aligned(4))) = {0};
+//__align(4) BYTE sd_scratch_buf[SD_BLOCK_SIZE];
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
 /*-----------------------------------------------------------------------*/
@@ -96,41 +98,37 @@ DRESULT disk_read (
 		// translate the arguments here
 
 		//result = RAM_disk_read(buff, sector, count);
-		if((DWORD)buff&0x3)
+		if(((DWORD)buff&0x3) != 0)
 		{
-			DRESULT res = RES_OK;
-			DWORD scratch[SD_BLOCK_SIZE / 4];
-			while (count--) 
+			UINT n;
+			result = SD_OK;
+			for(n=0; (n<count) && (SD_OK == result) ; n++)
 			{
-				res = disk_read(DEV_SDCARD,(void *)scratch, sector++, 1);
-
-				if (res != RES_OK) 
-				{
-					break;
-				}
-				
-				memcpy(buff, scratch, SD_BLOCK_SIZE);
+				result = SD_ReadBlock(sd_scratch_buf, (sector+n)*SD_BLOCK_SIZE, SD_BLOCK_SIZE);
+				memcpy(buff, sd_scratch_buf, SD_BLOCK_SIZE);
 				buff += SD_BLOCK_SIZE;
-			}
-			
-			return res;
+			}			
 		}
-			
-		if(count > 1)
-			result = SD_ReadMultiBlocks(buff, sector*SD_BLOCK_SIZE, SD_BLOCK_SIZE, count);
 		else
-			result = SD_ReadBlock(buff, sector*SD_BLOCK_SIZE, SD_BLOCK_SIZE);
+		{	
+				if(count > 1)
+						result = SD_ReadMultiBlocks(buff, sector*SD_BLOCK_SIZE, SD_BLOCK_SIZE, count);
+				else
+						result = SD_ReadBlock(buff, sector*SD_BLOCK_SIZE, SD_BLOCK_SIZE);
+				
+				/* Check if the SDIO data transfer is finished.*/
+				SD_WaitReadOperation();
+				/* Wait until end of SD card read operation.*/
+				while(SD_GetStatus() != SD_TRANSFER_OK);
+
+				// translate the reslut code here
+				res = (result == SD_OK)?RES_OK:RES_ERROR;
+
+				//return res;
+		}
 		
-		/* Check if the SDIO data transfer is finished.*/
-		SD_WaitReadOperation();
-		/* Wait until end of SD card read operation.*/
-		while(SD_GetStatus() != SD_TRANSFER_OK);
-
-		// translate the reslut code here
-		res = (result == SD_OK)?RES_OK:RES_ERROR;
-
-		//return res;
 		break;
+		
 	default:
 		break;
 	}
@@ -157,37 +155,33 @@ DRESULT disk_write (
 	switch (pdrv) {
 	case DEV_SDCARD :
 		// translate the arguments here
-		if((DWORD)buff&0x3)
+		if(((DWORD)buff&0x3) != 0)
 		{
-			DRESULT res = RES_OK;
-			DWORD scratch[SD_BLOCK_SIZE / 4];
-
-			while (count--) 
+			UINT n;
+			result = SD_OK;
+			for(n=0; (n<count) && (SD_OK == result); n++)
 			{
-				memcpy( scratch,buff,SD_BLOCK_SIZE);
-				res = disk_write(DEV_SDCARD,(void *)scratch, sector++, 1);
-				if (res != RES_OK) 
-				{
-					break;
-				}					
+				memcpy(sd_scratch_buf, buff, SD_BLOCK_SIZE);
+				result = SD_WriteBlock(sd_scratch_buf, (sector+n)*SD_BLOCK_SIZE, SD_BLOCK_SIZE);
 				buff += SD_BLOCK_SIZE;
 			}
-			
-			return res;
-		}	
-		//result = RAM_disk_write(buff, sector, count);
-		if(count>1)
-			result = SD_WriteMultiBlocks((BYTE*)buff, sector*SD_BLOCK_SIZE, SD_BLOCK_SIZE, count);
+		}
 		else
-			result = SD_WriteBlock((BYTE*)buff, sector*SD_BLOCK_SIZE, count);
-		
-		SD_WaitWriteOperation();
-		while(SD_GetStatus() != SD_TRANSFER_OK);
-		// translate the reslut code here
-		res = (SD_OK == result)?RES_OK:RES_ERROR;
-
+		{
+				//result = RAM_disk_write(buff, sector, count);
+				if(count>1)
+						result = SD_WriteMultiBlocks((BYTE*)buff, sector*SD_BLOCK_SIZE, SD_BLOCK_SIZE, count);
+				else
+						result = SD_WriteBlock((BYTE*)buff, sector*SD_BLOCK_SIZE, SD_BLOCK_SIZE);
+				
+				SD_WaitWriteOperation();
+				while(SD_GetStatus() != SD_TRANSFER_OK);
+				// translate the reslut code here
+				res = (SD_OK == result)?RES_OK:RES_ERROR;
+		}
 		//return res;
 		break;
+		
 	default:
 		break;
 	}
@@ -214,11 +208,12 @@ DRESULT disk_ioctl (
 		switch(cmd)
 		{
 			case GET_BLOCK_SIZE:
-				*(DWORD*)buff = 1;
+				*(DWORD*)buff = SDCardInfo.CardBlockSize;;
 				res = RES_OK;
 				break;
 			case GET_SECTOR_SIZE:
 				*(DWORD*)buff = (WORD)SDCardInfo.CardBlockSize;
+				res = RES_OK;
 				break;
 			case GET_SECTOR_COUNT:
 				*(DWORD*)buff = (DWORD)(SDCardInfo.CardCapacity >> 9);

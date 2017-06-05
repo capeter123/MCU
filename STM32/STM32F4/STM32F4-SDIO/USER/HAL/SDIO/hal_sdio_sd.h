@@ -36,6 +36,7 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx.h"
 #include "HAL_BSP_CONFIG.h"
 
 /** @addtogroup Utilities

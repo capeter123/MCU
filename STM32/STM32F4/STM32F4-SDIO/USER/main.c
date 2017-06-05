@@ -29,7 +29,7 @@
 #include "main.h"
 #include "stdio.h"
 #include "string.h"
-#include "stm32f4xx_bsp.h"
+#include "HAL_BSP_CONFIG.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Templates
   * @{
@@ -83,7 +83,8 @@ int main(void)
 	if(FR_NO_FILESYSTEM == fr)
 	{
 		printf("Not found a valid filesystem, format it now...\r\n");
-		fr = f_mkfs("0:", 0, 4096);
+		//fr = f_mkfs("0:", 0, 4096); /* only for old fatfs version. */
+		fr = f_mkfs("0:", FM_ANY, 4096, fs_work_buf, FF_MAX_SS);
 		if(FR_OK == fr)
 		{
 			printf("mkfs finished, you should reset the mcu...\r\n");

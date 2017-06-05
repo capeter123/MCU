@@ -33,8 +33,8 @@
 #include "stm32f4xx.h"
 #include "LED.h"
 #include "USART.h"
-#include "SDIO_Test.h"
-#include "stm324xg_eval_sdio_sd.h"
+#include "sdio_test.h"
+#include "hal_sdio_sd.h"
 #include "ff.h"
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

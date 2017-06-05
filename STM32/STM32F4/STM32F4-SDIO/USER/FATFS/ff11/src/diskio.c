@@ -101,14 +101,14 @@ DRESULT disk_read (
 		if(((DWORD)buff&0x3) != 0)
 		{
 			UINT n;
-      result = SD_OK;
+            result = SD_OK;
 			for(n=0; (n<count) && (SD_OK == result) ; n++)
 			{
 				result = SD_ReadBlock(sd_scratch_buf, (sector+n)*SD_BLOCK_SIZE, SD_BLOCK_SIZE);
 				memcpy(buff, sd_scratch_buf, SD_BLOCK_SIZE);
 				buff += SD_BLOCK_SIZE;
 			}			
-    }
+        }
 		else
 		{	
 				if(count > 1)
@@ -157,8 +157,8 @@ DRESULT disk_write (
 		// translate the arguments here
 		if(((DWORD)buff&0x3) != 0)
 		{
-      UINT n;
-      result = SD_OK;
+            UINT n;
+            result = SD_OK;
 			for(n=0; (n<count) && (SD_OK == result); n++)
 			{
 				memcpy(sd_scratch_buf, buff, SD_BLOCK_SIZE);

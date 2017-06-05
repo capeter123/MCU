@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER, STM32F40XX</Define>
               <Undefine></Undefine>
-              <IncludePath>.\FWLib\inc;.\USER;.\CMSIS\Core;.\CMSIS;.\USER\SDIO;.\USER\FATFS\ff13\source</IncludePath>
+              <IncludePath>.\FWLib\inc;.\CMSIS\Core;.\CMSIS;.\USER\FATFS\ff13\source;.\USER;.\USER\HAL;.\USER\HAL\SDIO;.\USER\HAL\USART;.\USER\HAL\LED</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -403,31 +403,6 @@
               <FileName>stm32f4xx_conf.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\USER\stm32f4xx_conf.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\USER\LED.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\LED.c</FilePath>
-            </File>
-            <File>
-              <FileName>USART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\USART.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_bsp.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\USER\stm32f4xx_bsp.h</FilePath>
-            </File>
-            <File>
-              <FileName>main.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\USER\main.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -602,17 +577,32 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>SDIO</GroupName>
+          <GroupName>HAL</GroupName>
           <Files>
             <File>
-              <FileName>stm324xg_eval_sdio_sd.c</FileName>
+              <FileName>LED.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\USER\SDIO\stm324xg_eval_sdio_sd.c</FilePath>
+              <FilePath>.\USER\HAL\LED\LED.c</FilePath>
             </File>
             <File>
-              <FileName>SDIO_Test.c</FileName>
+              <FileName>hal_sdio_sd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\USER\SDIO\SDIO_Test.c</FilePath>
+              <FilePath>.\USER\HAL\SDIO\hal_sdio_sd.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdio_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\HAL\SDIO\sdio_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>USART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\HAL\USART\USART.c</FilePath>
+            </File>
+            <File>
+              <FileName>HAL_BSP_CONFIG.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\HAL\HAL_BSP_CONFIG.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -628,11 +618,6 @@
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\FATFS\ff13\source\ff.c</FilePath>
-            </File>
-            <File>
-              <FileName>ffsystem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\FATFS\ff13\source\ffsystem.c</FilePath>
             </File>
             <File>
               <FileName>ffconf.h</FileName>

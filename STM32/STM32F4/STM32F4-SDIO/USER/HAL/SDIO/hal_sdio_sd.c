@@ -74,7 +74,7 @@
   *           - The SD_ReadBlock() function read only one block (512-byte). This
   *             function can transfer the data using DMA controller or using 
   *             polling mode. To select between DMA or polling mode refer to 
-  *             "SD_DMA_MODE" or "SD_POLLING_MODE" inside the stm324xg_eval_sdio_sd.h
+  *             "SD_DMA_MODE" or "SD_POLLING_MODE" inside the hal_sdio_sd.h
   *             file and uncomment the corresponding line. By default the SD DMA
   *             mode is selected          
   *           - The SD_ReadMultiBlocks() function read only mutli blocks (multiple 
@@ -100,7 +100,7 @@
   *           - The SD_WriteBlock() function write only one block (512-byte). This
   *             function can transfer the data using DMA controller or using 
   *             polling mode. To select between DMA or polling mode refer to 
-  *             "SD_DMA_MODE" or "SD_POLLING_MODE" inside the stm324xg_eval_sdio_sd.h
+  *             "SD_DMA_MODE" or "SD_POLLING_MODE" inside the hal_sdio_sd.h
   *             file and uncomment the corresponding line. By default the SD DMA
   *             mode is selected          
   *           - The SD_WriteMultiBlocks() function write only mutli blocks (multiple 
