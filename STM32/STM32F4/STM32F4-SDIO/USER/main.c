@@ -47,7 +47,7 @@ FRESULT fr;
 FIL fil;
 BYTE fbuffer[512] = {0};
 BYTE fs_work_buf[4096] __attribute__((aligned(4))) = {0};
-const char* write_content = "Hello Fatfs R0.11, mod by four gun.\r\n";
+const char* write_content = "Hello Fatfs R0.11, modify by four gun.\r\n";
 UINT nBytes;
 
 /* Private function prototypes -----------------------------------------------*/

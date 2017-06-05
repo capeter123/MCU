@@ -402,7 +402,7 @@ SD_Error SD_Init(void)
   __IO SD_Error errorstatus = SD_OK;
   
   /* SDIO Peripheral Low Level Init */
-   SD_LowLevel_Init();
+  SD_LowLevel_Init();
   
   SDIO_DeInit();
 
@@ -513,11 +513,11 @@ uint8_t SD_Detect(void)
 {
   __IO uint8_t status = SD_PRESENT;
 
-  /*!< Check GPIO to detect SD */
-  if (GPIO_ReadInputDataBit(SD_DETECT_GPIO_PORT, SD_DETECT_PIN) != Bit_RESET)
-  {
-    status = SD_NOT_PRESENT;
-  }
+  /*!< Check GPIO to detect SD, Not used currently. */
+//  if (GPIO_ReadInputDataBit(SD_DETECT_GPIO_PORT, SD_DETECT_PIN) != Bit_RESET)
+//  {
+//    status = SD_NOT_PRESENT;
+//  }
   return status;
 }
 
