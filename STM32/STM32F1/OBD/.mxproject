@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=D:/Workshop/SVN/usctrl/01_Project/11_zhongxin/OBD/04_MK/trunk/OBD_V0_L0_01/OBD/Inc
+HeaderPath=D:/Workspace/projects/MCU/STM32/STM32F1/OBD/Inc
 HeaderFiles=gpio.h;rtc.h;stm32f1xx_it.h;stm32f1xx_hal_conf.h;main.h;FreeRTOSConfig.h;can.h;adc.h;spi.h;tim.h;usart.h;dma.h;
-SourcePath=D:/Workshop/SVN/usctrl/01_Project/11_zhongxin/OBD/04_MK/trunk/OBD_V0_L0_01/OBD/Src
+SourcePath=D:/Workspace/projects/MCU/STM32/STM32F1/OBD/Src
 SourceFiles=gpio.h;rtc.h;stm32f1xx_it.h;stm32f1xx_hal_conf.h;main.h;gpio.c;rtc.c;stm32f1xx_it.c;stm32f1xx_hal_msp.c;main.c;FreeRTOSConfig.h;freertos.c;stm32f1xx_hal_timebase_TIM.c;can.h;can.c;adc.h;spi.h;tim.h;usart.h;adc.c;spi.c;tim.c;usart.c;dma.h;dma.c;
 
 [PreviousLibFiles]
